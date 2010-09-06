@@ -46,13 +46,23 @@ class Tree(object):
         return struct
                    
 
-    def from_pierson_tract(self,pos):
+    def from_pierson_tract(self,pos, D=None):
         pos = numpy.array(pos)
+        D = numpy.array(D)
         self.X = pos[:,0][None].T
         self.Y = pos[:,1][None].T
         self.Z = pos[:,2][None].T
         self.R = numpy.ones_like(self.X)
-        self.D = numpy.ones_like(self.X)
+        if D==None:
+            self.D = numpy.ones_like(self.X)
+        elif len(D.shape)==1:
+            self.D = D[None].T
+        else:
+            self.D = D
+
+        # check that all worked out well
+        assert D.shape == self.X.shape
+
         self.D = numpy.array(self.D,dtype = float)
         self.dA = scipy.sparse.lil_matrix((len(self.X),len(self.X)))
         self.rnames = ['axon']
