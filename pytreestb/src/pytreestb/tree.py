@@ -60,6 +60,8 @@ class Tree(object):
             self.dA[idx+1][idx] = 1
 
     def __eq__(self,other):
+        if not isinstance(other,Tree):
+            return False
         
         for n in ['X','Y','Z','R','D']:
             if not numpy.allclose(self.__dict__[n],other.__dict__[n]):
