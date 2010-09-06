@@ -47,17 +47,23 @@ class Tree(object):
                    
 
     def from_pierson_tract(self,pos):
-        pos = numpy.array(_pos)
-        self.X = pos[:,0]
-        self.Y = pos[:,1]
-        self.Z = pos[:,2]
-        self.R = numpy.zeros_like(self.X)
+        pos = numpy.array(pos)
+        self.X = pos[:,0][None].T
+        self.Y = pos[:,1][None].T
+        self.Z = pos[:,2][None].T
+        self.R = numpy.ones_like(self.X)
         self.D = numpy.ones_like(self.X)
         self.D = numpy.array(self.D,dtype = float)
-        self.dA = scipy.sparse.lil_martrix((len(self.X),len(self.X)))
+        self.dA = scipy.sparse.lil_matrix((len(self.X),len(self.X)))
+        self.rnames = ['axon']
         for idx in range(len(self.X)-1):
             #self.dA[idx][idx+1] = 1
-            self.dA[idx+1][idx] = 1
+            self.dA[idx+1,idx] = 1
+        # convert sparse matrix repr
+        # to compressed sparse column format
+        # as matlab likes
+        self.dA = self.dA.tocsc()
+
 
     def __eq__(self,other):
         if not isinstance(other,Tree):
