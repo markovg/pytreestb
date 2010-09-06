@@ -1,7 +1,7 @@
 import os
 import pymatlab
 from pymatlab import Session, FuncWrap
-from pytreestb.tree import Tree
+from pytreestb.tree import Tree, matlab_tree_converter
 
 # create trees modules on the fly from MATLAB TreeTB analogues
 import new
@@ -28,7 +28,7 @@ MATLAB Documentation
 
 
 def _close_session():
-    print "Closing Trees MATLAB session."
+    #print "Closing Trees MATLAB session."
     _session.close()
 import atexit
 atexit.register(_close_session)
@@ -48,7 +48,7 @@ def wrap_functions(names, converters, target_namespace):
 
 
 # Standard converters 
-_session.converters = [lambda x: Tree(x), pymatlab.csc_matrix_converter]
+_session.converters = [matlab_tree_converter, pymatlab.csc_matrix_converter]
 
 def import_trees_module(name):
     # create module & add to this one

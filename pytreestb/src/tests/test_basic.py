@@ -25,6 +25,30 @@ class TreesTBTestCase(unittest.TestCase):
         tree = pytreestb.sample_tree()
         assert isinstance(tree, pytreestb.Tree)
 
+    def test_pierson_tract(self):
+        s = self.session
+        tree = pytreestb.Tree()
+
+        # create a fake pierson tract
+        pt = numpy.zeros((10,3))
+        D =  3.0*numpy.ones(10)
+
+        pt[:,0] = numpy.linspace(0,100,num=10)
+        
+        # both invocations should work
+        # 1. comfy
+        tree.from_pierson_tract(pt,D=D)
+        assert pytreestb.IO.ver_tree(tree)
+
+        # 2. native D shape invocation
+        D =  D[None].T
+        tree.from_pierson_tract(pt,D=D)
+
+        assert isinstance(tree, pytreestb.Tree)
+        assert pytreestb.IO.ver_tree(tree)
+
+
+
     def test_resample(self):
         s = pytreestb.sample_tree()
         #pytreestb.edit.resample_tree(s)

@@ -4,34 +4,22 @@ import pymatlab
 
 class Tree(object):
         
-    def __init__(self,matlab_struct):
+    def __init__(self,**kwargs):
+        fields = ['rnames', 'D', 'dA', 'R', 'Y', 'X', 'Z']
+        d = kwargs
 
-        ms = matlab_struct
-        if isinstance(ms,pymatlab.Container):
-            ms = ms.data
+        # support Tree()
+        if d=={}:
+            for x in fields:
+                d[x] = None
 
-        if isinstance(ms,dict):
-            #matlab struct list [{}] was unpacked already
-            ms = ms
-        elif len(ms)==1 and isinstance(ms[0],dict):
-            # list with 1 dict element
-            ms = ms[0]
-        else:
-            raise TypeError, "expected MATLAB struct of len==1"
+        # if any fields given, no field can be missing
+        for x in fields:
+            if x not in d:
+                raise TypeError, "expected keys = %s, '%s' missing" % (str(fields), x)
 
-        self.X = ms['X']
-        self.Y = ms['Y']
-        self.Z = ms['Z']
-        self.R = ms['R']
-        self.D = ms['D']
-        self.rnames = ms['rnames']
-        dA = ms['dA']
-        if isinstance(dA,tuple) and len(dA)==4:
-            self.dA = scipy.sparse.csc_matrix(dA[:3],shape=dA[3])
-        elif isinstance(dA,scipy.sparse.csc_matrix):
-            self.dA = dA
-        else:
-            raise TypeError, "adjacency matrix, dA, in unexpected format."
+        self.__dict__.update(d)
+
 
     def to_matlab(self):
         """ This function is used by pymatlab.FuncWrap
@@ -48,24 +36,25 @@ class Tree(object):
 
     def from_pierson_tract(self,pos, D=None):
         pos = numpy.array(pos)
-        D = numpy.array(D)
         self.X = pos[:,0][None].T
         self.Y = pos[:,1][None].T
         self.Z = pos[:,2][None].T
         self.R = numpy.ones_like(self.X)
         if D==None:
             self.D = numpy.ones_like(self.X)
-        elif len(D.shape)==1:
-            self.D = D[None].T
         else:
-            self.D = D
+            D = numpy.array(D,dtype=float)
+            if len(D.shape)==1:
+                self.D = D[None].T
+            else:
+                self.D = D
 
         # check that all worked out well
-        assert D.shape == self.X.shape
+        assert self.D.shape == self.X.shape
 
-        self.D = numpy.array(self.D,dtype = float)
-        self.dA = scipy.sparse.lil_matrix((len(self.X),len(self.X)))
         self.rnames = ['axon']
+
+        self.dA = scipy.sparse.lil_matrix((len(self.X),len(self.X)))
         for idx in range(len(self.X)-1):
             #self.dA[idx][idx+1] = 1
             self.dA[idx+1,idx] = 1
@@ -90,3 +79,46 @@ class Tree(object):
         # yeah, its a bit funny how to do this without
         # going to a dense matrix.
         return self.dA.todok().items()==other.dA.todok().items()
+
+
+
+def matlab_tree_converter(matlab_struct):
+
+    tree = Tree()
+
+    ms = matlab_struct
+    if isinstance(ms,pymatlab.Container):
+        ms = ms.data
+
+    if isinstance(ms,dict):
+        #matlab struct list [{}] was unpacked already
+        ms = ms
+    elif len(ms)==1 and isinstance(ms[0],dict):
+        # list with 1 dict element
+        ms = ms[0]
+    else:
+        raise TypeError, "expected MATLAB struct of len==1"
+
+    try:
+        tree.X = ms['X']
+        tree.Y = ms['Y']
+        tree.Z = ms['Z']
+        tree.R = ms['R']
+        tree.D = ms['D']
+        tree.rnames = ms['rnames']
+        dA = ms['dA']
+    except KeyError as e:
+        raise TypeError, "MATLAB struct expected key '%s' missing." % e.args[0]
+
+    # TODO check shapes of X,Y,Z,R,D, dA
+
+    if isinstance(dA,tuple) and len(dA)==4:
+        tree.dA = scipy.sparse.csc_matrix(dA[:3],shape=dA[3])
+    elif isinstance(dA,scipy.sparse.csc_matrix):
+        tree.dA = dA
+    else:
+        raise TypeError, "adjacency matrix, dA, in unexpected format."
+
+    return tree
+
+    

@@ -1,3 +1,4 @@
+import numpy
 import pytreestb
 from pytreestb.edit import resample_tree
 from pytreestb.IO import ver_tree
@@ -10,9 +11,9 @@ M = pytreestb._session
 
 # create a fake pierson tract
 pt = numpy.zeros((10,3))
-pt[:,0] = linspace(0,100,num=10)
+pt[:,0] = numpy.linspace(0,100,num=10)
 
-t1 = pytreestb.sample_tree()
+t1 = pytreestb.Tree()
 t1.from_pierson_tract(pt)
 assert isinstance(t1,pytreestb.Tree)
 assert ver_tree(t1)
