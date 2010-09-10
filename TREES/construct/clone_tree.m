@@ -7,8 +7,8 @@
 % Creates as set of num trees similar to an input set of trees
 % intrees by distributing points randomly in the spanning fields of the
 % average intrees, scaling them within the variance of intrees and
-% connecting them with “MST_tree”, the minimum spanning tree constructor.
-% “MST_tree” requires the balancing factor bf between minimization of path
+% connecting them with "MST_tree", the minimum spanning tree constructor.
+% "MST_tree" requires the balancing factor bf between minimization of path
 % length and total wire length. (this script should be revised and is not
 % generally usable. This should be adapted for each separate project.
 %

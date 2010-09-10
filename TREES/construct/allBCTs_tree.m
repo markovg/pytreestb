@@ -7,7 +7,7 @@
 % Outputs in BCTs all possible non-isomorphic BCT strings with N nodes. On
 % demand, cell array of trees BCTtrees is calculated whose trees correspond
 % to the BCT strings using sensible metrics. This uses the equivalent tree
-% method from “BCT_tree”. Gets very slow very quickly.
+% method from "BCT_tree". Gets very slow very quickly.
 %
 % Input
 % -----
