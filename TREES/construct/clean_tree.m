@@ -8,7 +8,7 @@
 % reconstruction or artificial generation of a tree structure). Termination
 % points in close vicinity of other nodes on a different branch will be
 % deleted and very short terminal branches as well. The "close vicinity"
-% depends on the radius of the "other node" and on the input parameter
+% depends on the radius of the "other node“ and on the input parameter
 % radius. Consecutive calls of this function can be useful.
 %
 % Input
