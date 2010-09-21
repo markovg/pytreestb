@@ -20,6 +20,15 @@ class Tree(object):
 
         self.__dict__.update(d)
 
+    def __repr__(self):
+        return \
+            "    dA: %s, %s\n" % (self.dA.shape, self.dA.dtype) + \
+            "     R: %s, %s\n" % (self.R.shape, self.R.dtype) + \
+            "     X: %s, %s\n" % (self.X.shape, self.X.dtype) + \
+            "     Y: %s, %s\n" % (self.Y.shape, self.Y.dtype) + \
+            "     Z: %s, %s\n" % (self.Z.shape, self.Z.dtype) + \
+            "     D: %s, %s\n" % (self.D.shape, self.D.dtype) + \
+            "rnames: %s" % self.rnames
 
     def to_matlab(self):
         """ This function is used by pymatlab.FuncWrap
