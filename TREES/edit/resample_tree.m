@@ -119,15 +119,31 @@ for ward = 1 : N, % for each node look at point to add on the path
     ic = find (mdA * dA (:, 1)); % children index
     mdA = mdA * dA; % walk through the adjacency matrix
     ip = idpar (ic); % parent index
+                    
+    % loop through children ids
     for te = 1 : length (ic),
-        Gpath = (0 : sr : Plen (ic (te))); Gpath = Gpath (Gpath > Plen (ip (te)));
+        % construct vector 0 to path length at current child
+        Gpath = (0 : sr : Plen (ic (te))); 
+        % find those elements which are between parent and child 
+        Gpath = Gpath (Gpath > Plen (ip (te)));
         if ~isempty (Gpath),
+            % count of points Gpath elements between parent and child
             lenG  = length( Gpath);
+            % size along first dimension of ndA - tree point count
             nN    = size (ndA, 1);
+            % disconnect child and parent
             ndA (ic (te), ip (te)) = 0;
+            % append lenG new columns to the right of ndA
             ndA   = [ndA sparse(nN, lenG)];
+            % append lenG new rows on the bottom of ndA
+            % serial connectivity is among new Gpath elements is
+            % determined by spdiags(ones (lenG, 1), -1, lenG, lenG)
             ndA   = [ndA; [sparse(lenG, nN) spdiags(ones (lenG, 1), -1, lenG, lenG)]];
-            ndA (nN + 1, ip (te)) = 1; ndA (ic (te), nN + lenG) = 1;
+            % connect 1st new element as child to parent
+            ndA (nN + 1, ip (te)) = 1; 
+            % connect ic child as child to last new element
+            ndA (ic (te), nN + lenG) = 1;
+            % Place the new elements in space
             rpos  = ((Gpath - Plen (ip (te))) / (Plen (ic (te)) - Plen (ip (te))))';
             nX    = [nX; nX(ip (te))+rpos*(nX (ic (te))-nX (ip (te)))];
             nY    = [nY; nY(ip (te))+rpos*(nY (ic (te))-nY (ip (te)))];
