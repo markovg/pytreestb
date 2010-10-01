@@ -43,7 +43,7 @@ __self__ = sys.modules[__name__]
 
 modules = ['IO','edit','stacks','gui','graphtheory',
            'electrotonics','construct','graphical',
-           'metrics','scheme']
+           'metrics','scheme','dev']
 
 def wrap_functions(names, converters, target_namespace):
     for name in names:
@@ -59,7 +59,7 @@ def import_trees_module(name):
     # create module & add to this one
     mod_name = 'pytreestb.'+name
     mod = new.module(mod_name,
-                     "The Trees Toolbox '%s' module"+_session.help(name)) 
+                     ("The Trees Toolbox '%s' module" % mod_name) +_session.help(name)) 
     __self__.__setattr__(name,mod)
 
     sys.modules[mod_name] = mod
