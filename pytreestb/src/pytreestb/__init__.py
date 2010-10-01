@@ -13,6 +13,11 @@ trees_home = os.environ.get('TREESTB_HOME',None)
 if not trees_home:
     raise ImportError, "Please set environment variable TREESTB_HOME to src root of treestoolbox (get it at treestoolbox.org)."
 
+if not os.path.exists(os.path.join(trees_home,'start_trees.m')):
+    raise ImportError, "You have set the TREESTB_HOME but it does not contain 'start_trees.m'.\nPlease check that your TREESTB_HOME points to the src root of the trees MATLAB toolbox,\ni.e. the directory containing 'start_trees.m'."
+    
+
+
 # Session setup
 _session = Session("matlab -nosplash -nodesktop")
 _session.path(append=[trees_home])
